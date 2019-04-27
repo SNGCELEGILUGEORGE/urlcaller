@@ -11,6 +11,7 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -22,22 +23,16 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-
-
-
 public class Insert extends javax.swing.JFrame   {
 
     JTextField txtget;
-   
-   
-   JTextArea tal;
+    JTextArea tal;
     JButton btn1; 
     
     public Insert() {
         initComponents();
         setLayout(null);
-        
-        
+            
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       setVisible(true);
       setLocationRelativeTo(null);
@@ -66,8 +61,8 @@ public class Insert extends javax.swing.JFrame   {
         txtGet = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtArea = new javax.swing.JTextArea();
-        insid = new javax.swing.JTextField();
-        urlid = new javax.swing.JTextField();
+        txtinsid = new javax.swing.JTextField();
+        txturlid = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -93,13 +88,6 @@ public class Insert extends javax.swing.JFrame   {
         });
         jScrollPane1.setViewportView(txtArea);
 
-        insid.setEnabled(false);
-        insid.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                insidActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -114,9 +102,9 @@ public class Insert extends javax.swing.JFrame   {
                 .addGap(30, 30, 30))
             .addGroup(layout.createSequentialGroup()
                 .addGap(70, 70, 70)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(urlid)
-                    .addComponent(insid))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txturlid, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtinsid, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -131,11 +119,11 @@ public class Insert extends javax.swing.JFrame   {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(53, 53, 53)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(27, 27, 27)
-                .addComponent(insid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(urlid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(73, Short.MAX_VALUE))
+                .addGap(17, 17, 17)
+                .addComponent(txturlid, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(txtinsid, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(56, Short.MAX_VALUE))
         );
 
         pack();
@@ -155,8 +143,7 @@ public class Insert extends javax.swing.JFrame   {
         
          try
            {
-                  
-             theQuery("insert into tbl_insresponse(insdata,insdate,status) values('"+txtValue+"','"+sdate+"','"+status+"')");
+               theQuery("insert into tbl_insresponse(insdata,insdate,status) values('"+txtValue+"','"+sdate+"','"+status+"')");
            }
           catch(Exception ex){
              JOptionPane.showMessageDialog(null, ex.getMessage());
@@ -168,139 +155,93 @@ public class Insert extends javax.swing.JFrame   {
          cn=DriverManager.getConnection("jdbc:sqlserver://localhost:1433;"+"databaseName=urlcaller_db;user=root;password=root");            
          st=cn.createStatement();         
          System.out.println("connected");
-         String q1 = "select * from tbl_url where DATA='"+txtValue+"'";            
-         ResultSet rs = st.executeQuery(q1);  
+         String q1 = "select * from tbl_url where DATA='"+txtValue+"'";    
+      
+         ResultSet rs = st.executeQuery(q1); 
+     
           while(rs.next()) 
          { 
             String dataUrl=rs.getString("URL"); 
             txtArea.setText(dataUrl);
+             String urlid=rs.getString("URLID");
+            txturlid.setText(urlid);
+            
             //JOptionPane.showMessageDialog(null,txtArea);
         
          }
          }
          catch(Exception exp){
              JOptionPane.showMessageDialog(null,exp.getMessage());
-        
          }
-
+ String q2 = "select insid from tbl_insresponse";    
+      
+         ResultSet rs = null; 
+        try {
+            rs = st.executeQuery(q2);
+        } catch (SQLException ex) {
+            Logger.getLogger(Insert.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            while(rs.next()) 
+           { 
+              String rid=rs.getString("insid"); 
+              txtinsid.setText(rid);
+             
+              //JOptionPane.showMessageDialog(null,txtArea);
+          
+           }
+        } catch (SQLException ex) {
+            Logger.getLogger(Insert.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_requestActionPerformed
 
-    
     private void txtGetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtGetActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtGetActionPerformed
 
     private void txtAreaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtAreaMouseClicked
-      /*File f = new File("G:\\MCA\\4.Fourth Semester\\Project");
-      URI u = f.toURI();
-     
-        String txtVal=txtArea.getText();
-       try {
-        
-      Desktop.getDesktop().browse(new URI(u + txtVal));
-         
-    } catch (Exception ex) 
-        {
-            ex.printStackTrace();
-        }*/
-        //??????????????????????????????????????????//
-      /* try{
-         String a="http://localhost:8080/";//WebApplication1/home.jsp          
-     
-        String txtVal=txtArea.getText();
-        String ur=a+txtVal;
-       // URL u= new URL(ur);
-        //File htmlFile = new File(u);        
-     // Desktop.getDesktop().browse(new URI(url + txtVal));
-      
-      Desktop d=Desktop.getDesktop();
-    //Desktop.getDesktop().browse(htmlFile.toURI());
-        // Browse a URL, say google.com
-        d.browse(new URI(ur));
-         
-      } 
-        catch (Exception expc) 
-        {
-            expc.printStackTrace();
-        }  */
-        
-        /////////////////
-        
-        
-        
+       
         Connection cn=null;
         Statement st=null;
-         try
-         {
-         cn=DriverManager.getConnection("jdbc:sqlserver://localhost:1433;"+"databaseName=urlcaller_db;user=root;password=root");            
-         st=cn.createStatement();         
-         System.out.println("connected");
-         String q3 = "select urlid from tbl_url";            
-         ResultSet rs = st.executeQuery(q3);  
-          while(rs.next()) 
-         { 
-            String uid=rs.getString("URL"); 
-            insid.setText(uid);
-            //JOptionPane.showMessageDialog(null,txtArea);
-        
-         }
-         }
-         catch(Exception exp){
-             //JOptionPane.showMessageDialog(null,exp.getMessage());
-        
-         }
-
-           
-         try
-         {
-         cn=DriverManager.getConnection("jdbc:sqlserver://localhost:1433;"+"databaseName=urlcaller_db;user=root;password=root");            
-         st=cn.createStatement();         
-         System.out.println("connected");
-         String q4 = "select insid from tbl_insresponse";            
-         ResultSet rs = st.executeQuery(q4);  
-          while(rs.next()) 
-         { 
-            String rid=rs.getString("URL"); 
-            urlid.setText(rid);
-            //JOptionPane.showMessageDialog(null,txtArea);
-        
-         }
-         }
-         catch(Exception exp){
-             JOptionPane.showMessageDialog(null,exp.getMessage());
-        
-         }
-        
-         
-           java.util.Date date2=new java.util.Date();
-        DateFormat timeFormat2=new SimpleDateFormat("dd/MM/yyyy");
-        String rdate=timeFormat2.format(date2);  
-        
-         String txtuid=urlid.getText();
-         String txtrid=insid.getText();
+       
          
         try {
             String a="http://localhost:8080/";//WebApplication1/home.jsp          
-      String txtValue = txtGet.getText();
+       
+        String txtValue = txtGet.getText();
         String txtVal=txtArea.getText();
         String ur=a+txtVal;
+        
+        String urlid=txturlid.getText();
+        String resid=txtinsid.getText();
+        
+          java.util.Date date2=new java.util.Date();
+        DateFormat timeFormat2=new SimpleDateFormat("dd/MM/yyyy");
+        String rdate=timeFormat2.format(date2);  
+        
             URL url = new URL(ur);
             System.out.println(url);
             Desktop d=Desktop.getDesktop();
             d.browse(new URI(ur));
+            
             HttpURLConnection connection;
             connection = (HttpURLConnection)url.openConnection();
             connection.connect();
 
             int httpStatusCode = connection.getResponseCode(); //200, 404 etc.            
             System.out.println(httpStatusCode);
+            
             if(httpStatusCode==200)
             {
             //theQuery("update tbl_insresponse set status=1 where insdata='(select insdata from tbl_insresponse order by id asc)'");
-            theQuery("insert into tbl_response(RESPONSE_DATE,insid,URLID) values('"+rdate+"','" + txtrid +"','"+txtuid+"')");
+          theQuery("insert into tbl_response(RESPONSE_DATE,insid,URLID) values('"+rdate+"','" + resid +"','"+urlid+"')");
+            
             }
+     
             else{
-            theQuery("update tbl_insresponse set status=1 where insdata='(select insdata from tbl_insresponse order by id asc)';");
+            
+                theQuery("update tbl_insresponse set status=1 where insdata='(select insdata from tbl_insresponse order by id asc)';");
+            
             }
             
         } catch (IOException ex) {
@@ -310,10 +251,6 @@ public class Insert extends javax.swing.JFrame   {
         }
 
     }//GEN-LAST:event_txtAreaMouseClicked
-
-    private void insidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insidActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_insidActionPerformed
 
   
     /**
@@ -327,11 +264,11 @@ public class Insert extends javax.swing.JFrame   {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_request;
-    private javax.swing.JTextField insid;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea txtArea;
     private javax.swing.JTextField txtGet;
-    private javax.swing.JTextField urlid;
+    private javax.swing.JTextField txtinsid;
+    private javax.swing.JTextField txturlid;
     // End of variables declaration//GEN-END:variables
 
    
